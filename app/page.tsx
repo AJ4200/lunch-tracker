@@ -1,56 +1,70 @@
-import { Link } from "@nextui-org/link";
-import { Snippet } from "@nextui-org/snippet";
-import { Code } from "@nextui-org/code";
-import { button as buttonStyles } from "@nextui-org/theme";
+"use client";
+import { useState } from "react";
+import { Input } from "@nextui-org/input";
+import {
+  Button,
+  Card,
+  CardBody,
+  CardFooter,
+  CardHeader,
+  Select,
+  SelectItem,
+} from "@nextui-org/react";
+import axios from "axios";
 
-import { siteConfig } from "@/config/site";
-import { title, subtitle } from "@/components/primitives";
-import { GithubIcon } from "@/components/icons";
+import Loader from "@/components/loader";
 
 export default function Home() {
+  const [name, setName] = useState("");
+  const [mealOption, setMealOption] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async () => {
+    setLoading(true);
+    try {
+      await axios.post("/api/users", { Name: name, MealOption: mealOption });
+      setName("");
+      setMealOption("");
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+    }
+  };
+
+  const handleMealOptionChange = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    setMealOption(event.target.value);
+  };
+
   return (
     <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
-      <div className="inline-block max-w-lg text-center justify-center">
-        <h1 className={title()}>Make&nbsp;</h1>
-        <h1 className={title({ color: "violet" })}>beautiful&nbsp;</h1>
-        <br />
-        <h1 className={title()}>
-          websites regardless of your design experience.
-        </h1>
-        <h2 className={subtitle({ class: "mt-4" })}>
-          Beautiful, fast and modern React UI library.
-        </h2>
-      </div>
-
-      <div className="flex gap-3">
-        <Link
-          isExternal
-          className={buttonStyles({
-            color: "primary",
-            radius: "full",
-            variant: "shadow",
-          })}
-          href={siteConfig.links.docs}
-        >
-          Documentation
-        </Link>
-        <Link
-          isExternal
-          className={buttonStyles({ variant: "bordered", radius: "full" })}
-          href={siteConfig.links.github}
-        >
-          <GithubIcon size={20} />
-          GitHub
-        </Link>
-      </div>
-
-      <div className="mt-8">
-        <Snippet hideCopyButton hideSymbol variant="flat">
-          <span>
-            Get started by editing <Code color="primary">app/page.tsx</Code>
-          </span>
-        </Snippet>
-      </div>
+      <Card className="md:p-4 md:w-[50%] w-[95%] ">
+        <CardHeader>KFC Mod Team-Member Lunch Submission Form</CardHeader>
+        <CardBody className="space-y-2">
+          <Input
+            label="Team Member"
+            placeholder="Name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+          <Select
+            label="Lunch Break Meal Option"
+            value={mealOption}
+            onChange={handleMealOptionChange}
+          >
+            <SelectItem key="miniloaf+1pc">Mini Loaf + 1 Piece</SelectItem>
+            <SelectItem key="4wings">4 Zinger Wings</SelectItem>
+          </Select>
+        </CardBody>
+        <CardFooter>
+          {loading ? (
+            <Loader />
+          ) : (
+            <Button onClick={handleSubmit}>Submit</Button>
+          )}
+        </CardFooter>
+      </Card>
     </section>
   );
 }
