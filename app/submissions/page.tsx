@@ -7,6 +7,8 @@ import {
   TableRow,
   TableCell,
   DateRangePicker,
+  Pagination,
+  Button,
 } from "@nextui-org/react";
 import { useState, useEffect } from "react";
 import axios from "axios";
@@ -19,18 +21,7 @@ import {
 import { title } from "@/components/primitives";
 
 export default function Submissions() {
-const Today = parseDate(new Date().toISOString().slice(0, 10));
-
-const currentYear = Today.year;
-const currentMonth = Today.month.toString().padStart(2, "0");
-
-const monthEnd = parseDate(`${currentYear}-${currentMonth}-01`)
-  .add({
-    months: 1,
-  })
-  .subtract({
-    days: 1,
-  });
+  const Today = parseDate(new Date().toISOString().slice(0, 10));
 
   const [lunches, setLunches] = useState([]);
   const [filteredLunches, setFilteredLunches] = useState([]);
@@ -39,26 +30,31 @@ const monthEnd = parseDate(`${currentYear}-${currentMonth}-01`)
     end: CalendarDate;
   }>({
     start: parseDate(Today.toString()),
-    end: parseDate(monthEnd.toString()),
+    end: parseDate(Today.toString()),
   });
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+
   useEffect(() => {
     async function fetchLunches() {
       try {
         const response = await axios.get("/api/users");
-        setLunches(response.data);
-        setFilteredLunches(response.data);
+        setLunches(response.data.lunches);
+        setFilteredLunches(response.data.lunches);
+        setTotalPages(response.data.totalPages);
       } catch (error) {
         console.error("Error fetching lunches:", error);
       }
     }
     fetchLunches();
-  }, []);
+  }, [currentPage]);
 
   const handleDateFilter = (value: {
     start: CalendarDate;
     end: CalendarDate;
   }) => {
     setDateRange(value);
+    setCurrentPage(1); // Reset the current page when the date range changes
     if (!value.start || !value.end) {
       setFilteredLunches(lunches);
     } else {
@@ -78,10 +74,10 @@ const monthEnd = parseDate(`${currentYear}-${currentMonth}-01`)
       <h1 className={title()}>Lunch Submissions</h1>
       <DateRangePicker
         className="max-w-sm"
-          label="Date range"
-          value={dateRange}
-          onChange={handleDateFilter}
-        />
+        label="Date range"
+        value={dateRange}
+        onChange={handleDateFilter}
+      />
       <Table>
         <TableHeader>
           <TableColumn>Name</TableColumn>
@@ -100,6 +96,36 @@ const monthEnd = parseDate(`${currentYear}-${currentMonth}-01`)
           ))}
         </TableBody>
       </Table>
+      <div className="flex flex-col items-center gap-4">
+        <Pagination
+          color="primary"
+          page={currentPage}
+          total={totalPages}
+          onChange={setCurrentPage}
+        />
+        <div className="flex gap-2">
+          <Button
+            color="default"
+            size="sm"
+            variant="flat"
+            onPress={() =>
+              setCurrentPage((prev) => (prev > 1 ? prev - 1 : prev))
+            }
+          >
+            Previous
+          </Button>
+          <Button
+            color="default"
+            size="sm"
+            variant="flat"
+            onPress={() =>
+              setCurrentPage((prev) => (prev < totalPages ? prev + 1 : prev))
+            }
+          >
+            Next
+          </Button>
+        </div>
+      </div>
     </div>
   );
 }
