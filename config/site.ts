@@ -24,7 +24,7 @@ export const siteConfig = {
     },
   ],
   links: {
-    github: "https://github.com/nextui-org/nextui",
+    github: "https://github.com/aj4200",
     linkedin: "https://twitter.com/getnextui",
   },
 };

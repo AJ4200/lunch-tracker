@@ -9,11 +9,13 @@ import {
   CardHeader,
   Select,
   SelectItem,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
 } from "@nextui-org/react";
 
 import Loader from "@/components/loader";
 import { createTeamMember } from "@/lib/action";
-
 
 export default function Home() {
   const [name, setName] = useState("");
@@ -62,11 +64,23 @@ export default function Home() {
           </Select>
         </CardBody>
         <CardFooter>
-          {loading ? (
-            <Loader />
-          ) : (
-            <Button onClick={handleSubmit}>Submit</Button>
-          )}
+          <Popover placement="right">
+            <PopoverTrigger>
+              <Button onClick={handleSubmit}>Submit</Button>
+            </PopoverTrigger>
+            <PopoverContent>
+              {loading ? (
+                <Loader />
+              ) : (
+                <div className="px-1 py-2">
+                  <div className="text-small font-bold">Lunch Recorded</div>
+                  <div className="text-tiny">
+                    The team member&apos;s lunch has been successfully recorded.
+                  </div>
+                </div>
+              )}
+            </PopoverContent>
+          </Popover>
         </CardFooter>
       </Card>
     </section>
