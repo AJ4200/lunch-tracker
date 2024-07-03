@@ -10,9 +10,10 @@ import {
   Select,
   SelectItem,
 } from "@nextui-org/react";
-import axios from "axios";
 
 import Loader from "@/components/loader";
+import { createTeamMember } from "@/lib/action";
+
 
 export default function Home() {
   const [name, setName] = useState("");
@@ -22,7 +23,10 @@ export default function Home() {
   const handleSubmit = async () => {
     setLoading(true);
     try {
-      await axios.post("/api/users", { Name: name, MealOption: mealOption });
+      const formData = new FormData();
+      formData.append("Name", name);
+      formData.append("MealOption", mealOption);
+      await createTeamMember(formData);
       setName("");
       setMealOption("");
       setLoading(false);

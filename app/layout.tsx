@@ -8,6 +8,7 @@ import { Providers } from "./providers";
 import { siteConfig } from "@/config/site";
 import { fontSans } from "@/config/fonts";
 import { Navbar } from "@/components/navbar";
+import { connectToMongoDB } from "@/lib/db";
 
 export const metadata: Metadata = {
   title: {
@@ -31,7 +32,8 @@ export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
-}) {
+  }) {
+  connectToMongoDB();
   return (
     <html suppressHydrationWarning lang="en">
       <head />
