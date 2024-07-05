@@ -20,72 +20,76 @@ import {
 import { title } from "@/components/primitives";
 import { ITeamMemberDocument } from "@/models/memberModel";
 import { getAllTeamMembers } from "@/lib/action";
+import DownloadExcel from "@/components/download";
 
 export default function Submissions() {
-  const Today = parseDate(new Date().toISOString().slice(0, 10));
+   const Today = parseDate(new Date().toISOString().slice(0, 10));
 
-  const [teamMembers, setTeamMembers] = useState<ITeamMemberDocument[]>([]);
-  const [filteredTeamMembers, setFilteredTeamMembers] = useState<
-    ITeamMemberDocument[]
-  >([]);
-  const [dateRange, setDateRange] = useState<{
-    start: CalendarDate;
-    end: CalendarDate;
-  }>({
-    start: parseDate(Today.toString()),
-    end: parseDate(Today.toString()),
-  });
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
+   const [teamMembers, setTeamMembers] = useState<ITeamMemberDocument[]>([]);
+   const [filteredTeamMembers, setFilteredTeamMembers] = useState<
+     ITeamMemberDocument[]
+   >([]);
+   const [dateRange, setDateRange] = useState<{
+     start: CalendarDate;
+     end: CalendarDate;
+   }>({
+     start: parseDate(Today.toString()),
+     end: parseDate(Today.toString()),
+   });
+   const [currentPage, setCurrentPage] = useState(1);
+   const [totalPages, setTotalPages] = useState(1);
 
-  useEffect(() => {
-    async function fetchTeamMembers() {
-      try {
-        const response = await getAllTeamMembers();
-        if (Array.isArray(response)) {
-          setTeamMembers(response);
-          setFilteredTeamMembers(response);
-          setTotalPages(Math.ceil(response.length / 10)); // Assuming 10 items per page
-        } else {
-          console.error("Error fetching team members:", response.message);
-        }
-      } catch (error) {
-        console.error("Error fetching team members:", error);
-      }
-    }
-    fetchTeamMembers();
-  }, [currentPage]);
+   useEffect(() => {
+     async function fetchTeamMembers() {
+       try {
+         const response = await getAllTeamMembers();
+         if (Array.isArray(response)) {
+           setTeamMembers(response);
+           handleDateFilter({ start: dateRange.start, end: dateRange.end });
+           setTotalPages(Math.ceil(response.length / 10)); // Assuming 10 items per page
+         } else {
+           console.error("Error fetching team members:", response.message);
+         }
+       } catch (error) {
+         console.error("Error fetching team members:", error);
+       }
+     }
+     fetchTeamMembers();
+   }, [currentPage, dateRange.start, dateRange.end]);
 
-  const handleDateFilter = (value: {
-    start: CalendarDate;
-    end: CalendarDate;
-  }) => {
-    setDateRange(value);
-    setCurrentPage(1); // Reset the current page when the date range changes
-    if (!value.start || !value.end) {
-      setFilteredTeamMembers(teamMembers);
-    } else {
-      const filtered = teamMembers.filter((member) => {
-        const memberDate = new Date(member.created_At);
-        return (
-          memberDate >= value.start.toDate(getLocalTimeZone()) &&
-          memberDate <= value.end.toDate(getLocalTimeZone())
-        );
-      });
-      setFilteredTeamMembers(filtered);
-    }
-  };
+   const handleDateFilter = (value: {
+     start: CalendarDate;
+     end: CalendarDate;
+   }) => {
+     setDateRange(value);
+     setCurrentPage(1); // Reset the current page when the date range changes
+     if (!value.start || !value.end) {
+       setFilteredTeamMembers(teamMembers);
+     } else {
+       const filtered = teamMembers.filter((member) => {
+         const memberDate = new Date(member.created_At);
+         const startDate = value.start.toDate(getLocalTimeZone());
+         const endDate = value.end.toDate(getLocalTimeZone());
+         startDate.setHours(0, 0, 0, 0);
+         endDate.setHours(23, 59, 59, 999);
+         return memberDate >= startDate && memberDate <= endDate;
+       });
+       setFilteredTeamMembers(filtered);
+     }
+   };
 
   return (
     <div className="flex flex-col items-center w-full space-y-4">
       <h1 className={title()}>Team Member Submissions</h1>
-      <DateRangePicker
+     <div className=" flex items-center space-x-2">      <DateRangePicker
         className="max-w-sm"
         label="Date range"
         size="sm"
         value={dateRange}
         onChange={handleDateFilter}
       />
+      <DownloadExcel filteredTeamMembers={filteredTeamMembers} /></div>
+
       <Table>
         <TableHeader>
           <TableColumn>Name</TableColumn>

@@ -22,6 +22,7 @@ export default function Home() {
   const [mealOption, setMealOption] = useState("");
   const [loading, setLoading] = useState(false);
 
+
   const handleSubmit = async () => {
     setLoading(true);
     try {
@@ -59,18 +60,22 @@ export default function Home() {
             value={mealOption}
             onChange={handleMealOptionChange}
           >
-            <SelectItem key="miniloaf+1pc">Mini Loaf + 1 Piece</SelectItem>
+            <SelectItem key="Miniloaf+1pc">Mini Loaf + 1 Piece</SelectItem>
             <SelectItem key="4wings">4 Zinger Wings</SelectItem>
+            <SelectItem key="Coleslaw+1pc">Coleslaw + 1 Piece</SelectItem>
+            <SelectItem key="2SnackBurger">2 Snack Burgers</SelectItem>
           </Select>
         </CardBody>
         <CardFooter>
           <Popover placement="right">
             <PopoverTrigger>
-              <Button onClick={handleSubmit}>Submit</Button>
+              <Button isLoading={loading} onClick={handleSubmit}>
+                Submit
+              </Button>
             </PopoverTrigger>
             <PopoverContent>
               {loading ? (
-                <Loader />
+                "Saving..."
               ) : (
                 <div className="px-1 py-2">
                   <div className="text-small font-bold">Lunch Recorded</div>
