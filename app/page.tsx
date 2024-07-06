@@ -47,7 +47,7 @@ export default function Home() {
   return (
     <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
       <Card className="md:p-4 md:w-[50%] w-[95%] ">
-        <CardHeader>KFC Mod Team-Member Lunch Submission Form</CardHeader>
+        <CardHeader>KFC Modimolle Staff Meal Submission Form</CardHeader>
         <CardBody className="space-y-2">
           <Input
             label="Team Member"
@@ -56,14 +56,16 @@ export default function Home() {
             onChange={(e) => setName(e.target.value)}
           />
           <Select
-            label="Lunch Break Meal Option"
+            label="Staff Meal Option"
             value={mealOption}
             onChange={handleMealOptionChange}
           >
-            <SelectItem key="Miniloaf+1pc">Mini Loaf + 1 Piece</SelectItem>
-            <SelectItem key="4wings">4 Zinger Wings</SelectItem>
-            <SelectItem key="Coleslaw+1pc">Coleslaw + 1 Piece</SelectItem>
-            <SelectItem key="2SnackBurger">2 Snack Burgers</SelectItem>
+            <SelectItem key="Miniloaf + 1pc">Mini Loaf + 1 Piece</SelectItem>
+            <SelectItem key="4 Zinger Wings">4 Zinger Wings</SelectItem>
+            <SelectItem key="Coleslaw + 1pc">Coleslaw + 1 Piece</SelectItem>
+            <SelectItem key="2 Snack Burger">2 Snack Burgers</SelectItem>
+            <SelectItem key="Crunch Burger">Crunch Burger</SelectItem>
+            <SelectItem key="Extra Pap">Extra Pap</SelectItem>
           </Select>
         </CardBody>
         <CardFooter>
@@ -75,12 +77,12 @@ export default function Home() {
             </PopoverTrigger>
             <PopoverContent>
               {loading ? (
-                "Saving..."
+                "Submitting..."
               ) : (
                 <div className="px-1 py-2">
-                  <div className="text-small font-bold">Lunch Recorded</div>
+                  <div className="text-small font-bold">Staff Meal Submitted</div>
                   <div className="text-tiny">
-                    The team member&apos;s lunch has been successfully recorded.
+                    The team member&apos;s staff meal has been successfully submitted.
                   </div>
                 </div>
               )}

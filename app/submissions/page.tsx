@@ -80,7 +80,7 @@ export default function Submissions() {
 
   return (
     <div className="flex flex-col items-center w-full space-y-4">
-      <h1 className={title()}>Team Member Submissions</h1>
+      <h1 className={title()}>Staff Meal Submissions</h1>
      <div className=" flex items-center space-x-2">      <DateRangePicker
         className="max-w-sm"
         label="Date range"

@@ -1,0 +1,21 @@
+{
+  "name": "TM Lunch Tracker",
+  "short_name": "Lunch tracker",
+  "description": "A progressive web app built for tracking lunch at work (KFC)",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0070f3",
+  "icons": [
+    {
+      "src": "/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

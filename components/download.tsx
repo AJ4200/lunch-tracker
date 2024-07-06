@@ -19,7 +19,7 @@ export default function DownloadExcel({
         Time: new Date(created_At).toLocaleTimeString(),
       })
     );
-    exportToExcel(data, "Team Member Submissions");
+    exportToExcel(data, "Staff Meal Submissions");
   };
 
   return (

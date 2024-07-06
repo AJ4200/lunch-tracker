@@ -5,7 +5,7 @@ export const siteConfig = {
   description: "This is a tiny WebApp i built so that its easier to track lunch meals at my KFC job",
   navItems: [
     {
-      label: "Submit Lunch",
+      label: "Submit Staff Meal",
       href: "/",
     },
     {
@@ -15,7 +15,7 @@ export const siteConfig = {
   ],
   navMenuItems: [
     {
-      label: "Submit Lunch",
+      label: "Submit Staff Meal",
       href: "/",
     },
     {
