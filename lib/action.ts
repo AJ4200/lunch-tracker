@@ -1,46 +1,54 @@
 "use server";
 import { revalidatePath } from "next/cache";
-
 import { connectToMongoDB } from "./db";
-
 import TeamMember, { ITeamMemberDocument } from "@/models/memberModel";
 
 export const createTeamMember = async (formData: FormData) => {
   await connectToMongoDB();
   // Extracting name and meal option from formData
-  const name = formData.get("Name");
-  const mealOption = formData.get("MealOption");
+  const name = formData.get("Name") as string | null;
+  const mealOption = formData.get("MealOption") as string | null;
+
+  if (!name || !mealOption) {
+    return { message: "Name and MealOption are required" };
+  }
+
   try {
     // Creating a new team member using TeamMember model
-    const newTeamMember = await TeamMember.create({
+    const newTeamMember = new TeamMember({
       Name: name,
       MealOption: mealOption,
     });
+
     // Saving the new team member
     await newTeamMember.save();
+
     // Triggering revalidation of the specified path ("/")
     revalidatePath("/");
+
     // Returning the string representation of the new team member
     return newTeamMember.toString();
   } catch (error) {
-    console.log(error);
-    return { message: "error creating team member" };
+    return { message: "Error creating team member" };
   }
 };
 
-export const deleteTeamMember = async (id: FormData) => {
+export const deleteTeamMember = async (formData: FormData) => {
   // Extracting team member ID from formData
-  const teamMemberId = id.get("id");
+  const teamMemberId = formData.get("id") as string | null;
+
+  if (!teamMemberId) {
+    return { message: "Team member ID is required" };
+  }
+
   try {
     // Deleting the team member with the specified ID
     await TeamMember.deleteOne({ _id: teamMemberId });
-    // Triggering revalidation of the specified path ("/")
-    revalidatePath("/");
+
     // Returning a success message after deleting the team member
-    return "team member deleted";
+    return "Team member deleted";
   } catch (error) {
-    // Returning an error message if team member deletion fails
-    return { message: "error deleting team member" };
+    return { message: "Error deleting team member" };
   }
 };
 
@@ -52,7 +60,6 @@ export const getAllTeamMembers = async () => {
     // Returning the team members as an array
     return teamMembers;
   } catch (error) {
-    console.log(error);
-    return { message: "error fetching team members" };
+    return { message: "Error fetching team members" };
   }
 };
