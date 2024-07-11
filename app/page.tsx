@@ -14,17 +14,24 @@ import {
   PopoverContent,
 } from "@nextui-org/react";
 
-import Loader from "@/components/loader";
 import { createTeamMember } from "@/lib/action";
 
 export default function Home() {
   const [name, setName] = useState("");
   const [mealOption, setMealOption] = useState("");
   const [loading, setLoading] = useState(false);
-
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
 
   const handleSubmit = async () => {
+    if (!name || !mealOption) {
+      setError("Please fill in all the required fields.");
+      return;
+    }
+
     setLoading(true);
+    setError("");
+    setSuccess(false);
     try {
       const formData = new FormData();
       formData.append("Name", name);
@@ -33,8 +40,13 @@ export default function Home() {
       setName("");
       setMealOption("");
       setLoading(false);
+      setSuccess(true);
     } catch (error) {
       setLoading(false);
+      setError(
+        "An error occurred while submitting the form. Please try again."
+      );
+      setSuccess(false);
     }
   };
 
@@ -69,22 +81,44 @@ export default function Home() {
           </Select>
         </CardBody>
         <CardFooter>
-          <Popover placement="right">
+          <Popover
+            color={
+              error
+                ? "danger"
+                : loading
+                ? "foreground"
+                : success
+                ? "success"
+                : undefined
+            }
+            placement="right"
+            showArrow={true}
+          >
             <PopoverTrigger>
               <Button isLoading={loading} onClick={handleSubmit}>
-                Submit
+                {loading ? "" : "Submit"}
               </Button>
             </PopoverTrigger>
             <PopoverContent>
               {loading ? (
                 "Submitting..."
-              ) : (
+              ) : error ? (
                 <div className="px-1 py-2">
-                  <div className="text-small font-bold">Staff Meal Submitted</div>
+                  <div className="text-small font-bold">Error</div>
+                  <div className="text-tiny">{error}</div>
+                </div>
+              ) : success ? (
+                <div className="px-1 py-2">
+                  <div className="text-small font-bold">
+                    Staff Meal Submitted
+                  </div>
                   <div className="text-tiny">
-                    The team member&apos;s staff meal has been successfully submitted.
+                    The team member&apos;s staff meal has been successfully
+                    submitted.
                   </div>
                 </div>
+              ) : (
+                ""
               )}
             </PopoverContent>
           </Popover>
